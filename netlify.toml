@@ -2,7 +2,14 @@
 
 [build]
   publish = "."
-  
+
+# Form submission redirect
+[[redirects]]
+  from = "/success"
+  to = "/success.html"
+  status = 200
+
+# Fallback for single page app
 [[redirects]]
   from = "/*"
   to = "/index.html"
