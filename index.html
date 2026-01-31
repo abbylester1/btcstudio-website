@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BTCstudio - Bitcoin Development & Ecosystem</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Orbitron:wght@700;900&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #1a1a1a;
+            --btc-orange: #f7931a;
+            --accent-gold: #ffb800;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --grid-color: #2a2a2a;
+            --success: #00ff88;
+        }
+        
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+        
+        /* Grid Background */
+        .grid-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(var(--grid-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+            background-size: 50px 50px;
+            opacity: 0.3;
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(10, 10, 10, 0.98);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid var(--grid-color);
+            z-index: 1000;
+            padding: 1.2rem 2rem;
+            transition: all 0.3s ease;
+        }
+        
+        nav.scrolled {
+            padding: 0.8rem 2rem;
+            border-bottom-color: var(--btc-orange);
+            box-shadow: 0 4px 20px rgba(247, 147, 26, 0.1);
+        }
+        
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--btc-orange);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .logo::before {
+            content: '₿';
+            font-size: 1.8rem;
+        }
+        
+        .logo-btc {
+            color: var(--btc-orange);
+        }
+        
+        .logo-studio {
+            color: var(--text-primary);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+        
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            position: relative;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 500;
+            padding: 0.5rem 0;
+        }
+        
+        .nav-links a:hover {
+            color: var(--btc-orange);
+            text-shadow: 0 0 10px rgba(247, 147, 26, 0.3);
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--btc-orange), var(--accent-gold));
+            transition: width 0.3s ease;
+        }
+        
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        
+        /* Mobile Menu Toggle */
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+        }
+        
+        .menu-toggle span {
+            width: 25px;
+            height: 2px;
+            background: var(--btc-orange);
+            transition: all 0.3s ease;
+        }
+        
+        /* Sections */
+        section {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            padding: 6rem 2rem 4rem;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        /* Hero Section */
+        .hero {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            position: relative;
+        }
+        
+        .hero-content {
+            max-width: 900px;
+        }
+        
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(2.5rem, 8vw, 6rem);
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: -2px;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease 0.2s forwards;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, var(--btc-orange), var(--accent-gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .hero-description {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 3rem;
+            max-width: 600px;
+            line-height: 1.8;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease 0.4s forwards;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease 0.6s forwards;
+        }
+        
+        .btn {
+            padding: 1rem 2.5rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: 2px solid var(--btc-orange);
+            background: transparent;
+            color: var(--btc-orange);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--btc-orange);
+            transition: left 0.3s ease;
+            z-index: -1;
+        }
+        
+        .btn:hover {
+            color: var(--bg-primary);
+        }
+        
+        .btn:hover::before {
+            left: 0;
+        }
+        
+        .btn-secondary {
+            border-color: var(--text-secondary);
+            color: var(--text-secondary);
+        }
+        
+        .btn-secondary::before {
+            background: var(--text-secondary);
+        }
+        
+        /* Hash Pattern Decoration */
+        .hash-pattern {
+            position: absolute;
+            right: 5%;
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: 0.1;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--btc-orange);
+            line-height: 1.4;
+            max-width: 300px;
+            word-break: break-all;
+            animation: fadeIn 1s ease 0.8s forwards;
+        }
+        
+        /* Services Section */
+        .services {
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--grid-color);
+            border-bottom: 1px solid var(--grid-color);
+        }
+        
+        .section-header {
+            margin-bottom: 4rem;
+        }
+        
+        .section-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 900;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            letter-spacing: -1px;
+        }
+        
+        .section-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            max-width: 600px;
+        }
+        
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .service-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--grid-color);
+            padding: 2.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--btc-orange);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+        
+        .service-card:hover {
+            border-color: var(--btc-orange);
+            transform: translateY(-5px);
+        }
+        
+        .service-card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .service-icon {
+            margin-bottom: 1.5rem;
+            color: var(--btc-orange);
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+        }
+        
+        .service-icon svg {
+            width: 3rem;
+            height: 3rem;
+        }
+        
+        .service-card h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .service-card p {
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+        
+        .service-tag {
+            display: inline-block;
+            margin-top: 1rem;
+            padding: 0.3rem 0.8rem;
+            background: rgba(247, 147, 26, 0.1);
+            border: 1px solid var(--btc-orange);
+            color: var(--btc-orange);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        /* Projects Section */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+        
+        .project-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--grid-color);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .project-card:hover {
+            border-color: var(--btc-orange);
+            box-shadow: 0 0 30px rgba(247, 147, 26, 0.2);
+        }
+        
+        .project-image {
+            width: 100%;
+            height: 250px;
+            background: linear-gradient(135deg, var(--bg-primary), #2a2a2a);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--btc-orange);
+            border-bottom: 1px solid var(--grid-color);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .project-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                linear-gradient(var(--grid-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+            background-size: 20px 20px;
+            opacity: 0.3;
+            z-index: 0;
+        }
+        
+        .project-image svg {
+            width: 5rem;
+            height: 5rem;
+            position: relative;
+            z-index: 1;
+            filter: drop-shadow(0 0 20px rgba(247, 147, 26, 0.3));
+        }
+        
+        .project-image-1 {
+            background: linear-gradient(135deg, #1a1a1a, #2a2a2a, #1a1a1a);
+        }
+        
+        .project-image-2 {
+            background: linear-gradient(135deg, #0a0a0a, #252525, #0a0a0a);
+        }
+        
+        .project-image-3 {
+            background: linear-gradient(135deg, #1a1a1a, #1f1f1f, #2a2a2a);
+        }
+        
+        .project-content {
+            padding: 2rem;
+        }
+        
+        .project-card h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+        }
+        
+        .project-description {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+        }
+        
+        .project-tech {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .tech-tag {
+            padding: 0.3rem 0.8rem;
+            background: rgba(247, 147, 26, 0.1);
+            border: 1px solid var(--grid-color);
+            color: var(--btc-orange);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+        }
+        
+        .project-link {
+            color: var(--btc-orange);
+            text-decoration: none;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+        
+        .project-link:hover {
+            color: var(--accent-gold);
+        }
+        
+        .project-link::after {
+            content: ' →';
+        }
+        
+        /* Tech Stack Section */
+        .tech-stack {
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--grid-color);
+        }
+        
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .tech-item {
+            background: var(--bg-primary);
+            border: 1px solid var(--grid-color);
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .tech-item:hover {
+            border-color: var(--btc-orange);
+            transform: translateY(-3px);
+        }
+        
+        .tech-item h4 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: var(--btc-orange);
+            text-transform: uppercase;
+        }
+        
+        .tech-item p {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+        
+        /* Contact Section */
+        .contact {
+            border-top: 1px solid var(--grid-color);
+        }
+        
+        .contact-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .form-group label {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--btc-orange);
+        }
+        
+        .form-group input,
+        .form-group textarea {
+            background: var(--bg-secondary);
+            border: 1px solid var(--grid-color);
+            padding: 1rem;
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--btc-orange);
+            box-shadow: 0 0 0 2px rgba(247, 147, 26, 0.1);
+        }
+        
+        .form-group textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+        
+        /* Footer */
+        footer {
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--grid-color);
+            padding: 3rem 2rem;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            color: var(--btc-orange);
+        }
+        
+        .footer-text {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+        
+        .footer-text span {
+            color: var(--btc-orange);
+        }
+        
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 0.1;
+            }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: flex;
+            }
+            
+            .nav-links {
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: var(--bg-primary);
+                flex-direction: column;
+                padding: 2rem;
+                gap: 1rem;
+                transform: translateY(-100%);
+                opacity: 0;
+                pointer-events: none;
+                transition: all 0.3s ease;
+                border-bottom: 1px solid var(--grid-color);
+            }
+            
+            .nav-links.active {
+                transform: translateY(0);
+                opacity: 1;
+                pointer-events: all;
+            }
+            
+            .hash-pattern {
+                display: none;
+            }
+            
+            section {
+                padding: 4rem 1.5rem 3rem;
+            }
+            
+            .services-grid,
+            .projects-grid,
+            .tech-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="grid-bg"></div>
+    
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <div class="logo">
+                <span class="logo-btc">BTC</span>
+                <span class="logo-studio">Studio</span>
+            </div>
+            <div class="menu-toggle" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#home" onclick="closeMenu()">Home</a></li>
+                <li><a href="#services" onclick="closeMenu()">Services</a></li>
+                <li><a href="#projects" onclick="closeMenu()">Projects</a></li>
+                <li><a href="#tech" onclick="closeMenu()">Tech Stack</a></li>
+                <li><a href="#contact" onclick="closeMenu()">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+    
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="container hero-content">
+            <h1>Engineering <span class="gradient-text">Bitcoin</span> Infrastructure</h1>
+            <p class="hero-description">
+                We build sovereign code for a sovereign network. BTCstudio specializes in Bitcoin protocol development, 
+                Lightning Network solutions, and Layer 2 implementations that push the boundaries of decentralized finance.
+            </p>
+            <div class="cta-buttons">
+                <a href="#contact" class="btn">Start a Project</a>
+            </div>
+        </div>
+        <div class="hash-pattern">
+            0000000000000000000320283a032748cef8227873ff4872689bf23f1cda83a5
+            000000000000000000024bead8df69990852c202db0e0097c1a12ea637d7e96d
+            0000000000000000000335dc0e82a836e1cdcceb76e03affe9320e2a6f87d33c
+        </div>
+    </section>
+    
+    <!-- Services Section -->
+    <section class="services" id="services">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Our Services</h2>
+                <p class="section-subtitle">
+                    Comprehensive Bitcoin development solutions backed by deep protocol expertise
+                </p>
+            </div>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                    </div>
+                    <h3>Lightning Network</h3>
+                    <p>Custom Lightning implementations, channel management solutions, and payment routing optimization for instant Bitcoin transactions.</p>
+                    <span class="service-tag">Layer 2</span>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                    </div>
+                    <h3>Protocol Development</h3>
+                    <p>Core Bitcoin protocol contributions, BIP implementations, and custom consensus mechanisms for enterprise-grade applications.</p>
+                    <span class="service-tag">Core Dev</span>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+                    </div>
+                    <h3>Security Auditing</h3>
+                    <p>Comprehensive security audits for Bitcoin applications, smart contracts, and infrastructure with detailed vulnerability assessments.</p>
+                    <span class="service-tag">Security</span>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><path d="m10 13-2 2 2 2"/><path d="m14 17 2-2-2-2"/></svg>
+                    </div>
+                    <h3>Smart Contracts</h3>
+                    <p>Bitcoin-native smart contract development using Taproot, Miniscript, and advanced scripting capabilities.</p>
+                    <span class="service-tag">Scripting</span>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
+                    </div>
+                    <h3>Infrastructure</h3>
+                    <p>Full-node deployment, indexing solutions, API development, and scalable backend architecture for Bitcoin applications.</p>
+                    <span class="service-tag">DevOps</span>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+                    </div>
+                    <h3>Developer Education</h3>
+                    <p>Training programs, workshops, and consulting to help teams master Bitcoin development and best practices.</p>
+                    <span class="service-tag">Training</span>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Projects Section -->
+    <section class="projects" id="projects">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Featured Projects</h2>
+                <p class="section-subtitle">
+                    Real-world implementations pushing Bitcoin technology forward
+                </p>
+            </div>
+            <div class="projects-grid">
+                <div class="project-card">
+                    <div class="project-image project-image-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                    </div>
+                    <div class="project-content">
+                        <h3>Lightning Payment Gateway</h3>
+                        <p class="project-description">
+                            High-performance payment processing infrastructure handling 10,000+ transactions per second with sub-second finality.
+                        </p>
+                        <div class="project-tech">
+                            <span class="tech-tag">LND</span>
+                            <span class="tech-tag">Rust</span>
+                            <span class="tech-tag">PostgreSQL</span>
+                        </div>
+                        <a href="#" class="project-link">View Case Study</a>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <div class="project-image project-image-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    </div>
+                    <div class="project-content">
+                        <h3>Multi-Sig Vault Protocol</h3>
+                        <p class="project-description">
+                            Enterprise custody solution with advanced Taproot scripting, time-locks, and threshold signatures for institutional security.
+                        </p>
+                        <div class="project-tech">
+                            <span class="tech-tag">Taproot</span>
+                            <span class="tech-tag">Miniscript</span>
+                            <span class="tech-tag">C++</span>
+                        </div>
+                        <a href="#" class="project-link">View Case Study</a>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <div class="project-image project-image-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+                    </div>
+                    <div class="project-content">
+                        <h3>Bitcoin Indexer API</h3>
+                        <p class="project-description">
+                            Scalable blockchain indexing service with GraphQL API, real-time WebSocket updates, and advanced query capabilities.
+                        </p>
+                        <div class="project-tech">
+                            <span class="tech-tag">Bitcoin Core</span>
+                            <span class="tech-tag">GraphQL</span>
+                            <span class="tech-tag">Redis</span>
+                        </div>
+                        <a href="#" class="project-link">View Case Study</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Tech Stack Section -->
+    <section class="tech-stack" id="tech">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Technology Stack</h2>
+                <p class="section-subtitle">
+                    Battle-tested tools and frameworks for Bitcoin development
+                </p>
+            </div>
+            <div class="tech-grid">
+                <div class="tech-item">
+                    <h4>Bitcoin Core</h4>
+                    <p>Reference implementation & protocol development</p>
+                </div>
+                <div class="tech-item">
+                    <h4>Lightning (LND/CLN)</h4>
+                    <p>Layer 2 payment channels & routing</p>
+                </div>
+                <div class="tech-item">
+                    <h4>Rust</h4>
+                    <p>High-performance systems programming</p>
+                </div>
+                <div class="tech-item">
+                    <h4>C++</h4>
+                    <p>Core protocol & low-level development</p>
+                </div>
+                <div class="tech-item">
+                    <h4>Taproot/Schnorr</h4>
+                    <p>Advanced scripting & privacy features</p>
+                </div>
+                <div class="tech-item">
+                    <h4>Miniscript</h4>
+                    <p>Policy-based Bitcoin scripting</p>
+                </div>
+                <div class="tech-item">
+                    <h4>BDK</h4>
+                    <p>Bitcoin Development Kit integration</p>
+                </div>
+                <div class="tech-item">
+                    <h4>Electrum Protocol</h4>
+                    <p>Lightweight client architecture</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Contact Section -->
+    <section class="contact" id="contact">
+        <div class="container contact-container">
+            <div class="section-header">
+                <h2 class="section-title">Start Building</h2>
+                <p class="section-subtitle">
+                    Ready to bring your Bitcoin project to life? Let's talk.
+                </p>
+            </div>
+            <form class="contact-form" action="mailto:abbylester@gmail.com" method="post" enctype="text/plain" onsubmit="return handleSubmit(event)">
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="project">Project Type</label>
+                    <input type="text" id="project" name="project" placeholder="e.g., Lightning Network Integration" required>
+                </div>
+                <div class="form-group">
+                    <label for="message">Message</label>
+                    <textarea id="message" name="message" required></textarea>
+                </div>
+                <button type="submit" class="btn">Send Message</button>
+            </form>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="https://github.com" target="_blank">GitHub</a>
+                <a href="https://twitter.com" target="_blank">Twitter</a>
+                <a href="https://t.me" target="_blank">Telegram</a>
+                <a href="mailto:hello@btcstudio.dev">Email</a>
+            </div>
+            <p class="footer-text">
+                © 2026 BTCstudio. Building the future of <span>Bitcoin</span>.
+            </p>
+        </div>
+    </footer>
+    
+    <script>
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // Mobile menu toggle
+        function toggleMenu() {
+            const navLinks = document.getElementById('navLinks');
+            navLinks.classList.toggle('active');
+        }
+        
+        function closeMenu() {
+            const navLinks = document.getElementById('navLinks');
+            navLinks.classList.remove('active');
+        }
+        
+        // Form submission
+        function handleSubmit(event) {
+            // Allow the mailto: to work naturally
+            alert('Opening your email client to send the message...');
+            return true;
+        }
+        
+        // Add scroll effect to navigation
+        let lastScroll = 0;
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('nav');
+            const currentScroll = window.pageYOffset;
+            
+            if (currentScroll > 100) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+            
+            lastScroll = currentScroll;
+        });
+    </script>
+</body>
+</html>
