@@ -3,7 +3,7 @@
 A modern, cyber-brutalist Bitcoin development studio website built with pure HTML/CSS/JS.
 
 ## 🚀 Live Demo
-Coming soon...
+btcstudio.netlify.app
 
 ## 🎨 Features
 - Cyber-brutalist design aesthetic
