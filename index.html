@@ -930,7 +930,12 @@
                     Ready to bring your Bitcoin project to life? Let's talk.
                 </p>
             </div>
-            <form class="contact-form" action="mailto:abbylester@gmail.com" method="post" enctype="text/plain" onsubmit="return handleSubmit(event)">
+            <form class="contact-form" name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="/success.html">
+                <input type="hidden" name="form-name" value="contact" />
+                <!-- Honeypot for spam protection -->
+                <p style="display:none;">
+                    <label>Don't fill this out if you're human: <input name="bot-field" /></label>
+                </p>
                 <div class="form-group">
                     <label for="name">Name</label>
                     <input type="text" id="name" name="name" required>
@@ -959,7 +964,7 @@
                 <a href="https://github.com" target="_blank">GitHub</a>
                 <a href="https://twitter.com" target="_blank">Twitter</a>
                 <a href="https://t.me" target="_blank">Telegram</a>
-                <a href="mailto:hello@btcstudio.dev">Email</a>
+                <a href="/cdn-cgi/l/email-protection#83ebe6efefecc3e1f7e0f0f7f6e7eaecade7e6f5">Email</a>
             </div>
             <p class="footer-text">
                 © 2026 BTCstudio. Building the future of <span>Bitcoin</span>.
@@ -967,7 +972,7 @@
         </div>
     </footer>
     
-    <script>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
         // Smooth scrolling
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
@@ -993,13 +998,6 @@
             navLinks.classList.remove('active');
         }
         
-        // Form submission
-        function handleSubmit(event) {
-            // Allow the mailto: to work naturally
-            alert('Opening your email client to send the message...');
-            return true;
-        }
-        
         // Add scroll effect to navigation
         let lastScroll = 0;
         window.addEventListener('scroll', () => {
@@ -1017,3 +1015,4 @@
     </script>
 </body>
 </html>
+        
